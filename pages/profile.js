@@ -33,6 +33,7 @@ function ProfileScreen() {
     }
     setValue('name', userInfo.name);
     setValue('email', userInfo.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ ]  );
 
   console.log(userInfo)

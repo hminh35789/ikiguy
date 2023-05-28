@@ -37,6 +37,7 @@ import dynamic from "next/dynamic";
       if (cartItems.length === 0) {
         router.push('/cart');
       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [paymentMethod, router]);
   
     const [loading, setLoading] = useState(false);

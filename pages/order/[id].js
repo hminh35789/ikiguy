@@ -72,6 +72,7 @@ function reducer(state, action) {
       if (!order._id || (order._id && order._id !== orderId)) {
         fetchOrder();
       }   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [order]);
   
     return (

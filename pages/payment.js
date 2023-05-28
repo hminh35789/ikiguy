@@ -44,6 +44,7 @@ function PaymentScreen() {
     }
     
     setSelectedPaymentMethod(paymentMethod || '');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paymentMethod, router, shippingAddress]);
 
   return (

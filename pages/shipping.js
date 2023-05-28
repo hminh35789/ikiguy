@@ -32,6 +32,7 @@ function ShippingScreen() {
         setValue('city',shippingAddress ? shippingAddress.city : '');
         setValue('postalCode',shippingAddress ? shippingAddress.postalCode : '');
         setValue('country',shippingAddress ? shippingAddress.country : '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userInfo])
 
     const submitHandler = ({ fullName, address, city, postalCode, country }) =>{
