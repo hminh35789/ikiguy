@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Layout from "../components/Layout"
 import Link from 'next/link'
 import { useForm } from "react-hook-form"
-import { signIn, useSession } from "next-auth/react"
+// import { signIn, useSession } from "next-auth/react"
 import { getError } from '../utils/error'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'

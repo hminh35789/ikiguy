@@ -1,8 +1,8 @@
 import { StarIcon as EmptyStarIcon } from '@heroicons/react/outline';
-import { ChevronDownIcon, StarIcon } from '@heroicons/react/solid';
+import {  StarIcon } from '@heroicons/react/solid';
 import React from 'react';
 
-export default function Rating({ rating, numReviews }) {
+export default function Rating({ rating }) {
   return (
     <div className="flex items-center  text-amber-300">
       {rating >= 0.5 ? (

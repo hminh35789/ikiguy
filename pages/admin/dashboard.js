@@ -82,6 +82,7 @@ function AdminDashboard() {
     };
 
     fetchData();
+
   }, []);
 
   const data = {

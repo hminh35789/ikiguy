@@ -8,7 +8,7 @@ const Button = () => {
 
     return (
         <button
-            onClick={() => theme == "dark"? setTheme('light'): setTheme("dark")}
+            onClick={() => currentTheme == "dark"? setTheme('light'): setTheme("dark")}
             className='
             
               transition-all duration-100

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useContext, useReducer } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { getError } from '../utils/error';
 import { Store } from '../utils/Store';
 import Layout from '../components/Layout';

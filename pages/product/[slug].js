@@ -10,7 +10,7 @@ import Product from '../../model/productModal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Rating from "../../components/Rating"
-import { ChevronDownIcon } from '@heroicons/react/solid';
+// import { ChevronDownIcon } from '@heroicons/react/solid';
 
 function ProductScreen(props) {
 
