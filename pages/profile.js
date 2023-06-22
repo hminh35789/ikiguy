@@ -1,7 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { getError } from '../utils/error';
 import { Store } from '../utils/Store';
 import Layout from '../components/Layout';
@@ -16,6 +17,7 @@ function ProfileScreen() {
   const router = useRouter();
   
   const { userInfo } = state;
+ 
 
   const {
     handleSubmit,
@@ -26,24 +28,27 @@ function ProfileScreen() {
   } = useForm();
 
  
-  
+  const [file, setFile] = useState(); 
+
   useEffect(() => {
     if (!userInfo) {
-     return router.push('/login');
+       router.push('/');
     }
-    setValue('name', userInfo.name);
-    setValue('email', userInfo.email);
+    setValue('name', userInfo?.name);
+    setValue('email', userInfo?.email);
+    setValue('avatar', userInfo?.avatar);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ ]  );
+  }, [ userInfo]  );
 
   console.log(userInfo)
 
-  const submitHandler = async ({ name, email, password }) => {
+  const submitHandler = async ({ name, email, password, avatar }) => {
     try {
      const { data } = await axios.put('/api/users/profile', {
         name,
         email,
         password,
+        avatar
       },
       { headers: { authorization: `Bearer ${userInfo.token}` } }
       );
@@ -63,6 +68,46 @@ function ProfileScreen() {
     }
   };
 
+  const uploadHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    try {
+      // dispatch({ type: 'UPLOAD_REQUEST' });
+      const { data } = await axios.post('/api/users/imageUser', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+      // dispatch({ type: 'UPLOAD_SUCCESS' });
+      setFile(URL.createObjectURL(file));
+      setValue('avatar', data.secure_url);
+      toast.success('File uploaded successfully');
+    } catch (err) {
+      // dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  };
+
+
+//   const changeAvatar = async (e) =>  {
+        
+//     const file = e.target.files[0]
+//     if(!file)
+//         return dispatch({type: 'NOTIFY', payload: {error: 'File does not exist.'}})
+
+//     if(file.size > 1024 * 1024) //1mb
+//         return dispatch({type: 'NOTIFY', payload: {error: 'The largest image size is 1mb.'}})
+
+//     if(file.type !== "image/jpeg" && file.type !== "image/png") //format
+//         return dispatch({type: 'NOTIFY', payload: {error: 'Image format is incorrect.'}})
+//     setFile(URL.createObjectURL(file));
+  
+
+//    toast.success('Avatar updated successfully');
+// }
+
   return (
     <Layout title="Profile">
      
@@ -78,8 +123,34 @@ function ProfileScreen() {
           <div className="overflow-x-auto md:col-span-10">
             
             <div className='card p-5'>
-            
-            <form
+            <div className="grid md:grid-cols-12 md:gap-5">
+              <div className="overflow-x-auto md:col-span-2 ">
+          
+              <div className="mb-4">
+                <label htmlFor="imageFile">Upload image</label>
+
+                <img src={file  || userInfo?.avatar} 
+                        alt="avatar" />
+
+                <input
+                  type="file"
+                  className="w-full"
+                  id="imageFile"
+                  onChange={uploadHandler}
+                />
+                <label htmlFor="image">image</label>
+                <input
+                  type="text"
+                  className="w-full"
+                  id="avatar"
+                  {...register('avatar', {
+                    required: 'Please enter avatar',
+                  })}
+                />
+                </div>
+              </div>
+              <div className="overflow-x-auto md:col-span-10">
+              <form
         className="mx-auto max-w-screen-md"
         onSubmit={handleSubmit(submitHandler)}
       >
@@ -164,7 +235,11 @@ function ProfileScreen() {
         <div className="mb-4">
           <button className="primary-button">Update Profile</button>
         </div>
-      </form>
+            </form>
+              </div>
+
+            </div>
+          
             </div>
        
             </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Head from 'next/head'
 import Link from 'next/link'
 import React, {useContext, useEffect, useState} from 'react'
@@ -14,8 +15,10 @@ function Layout({ title, children}) {
 
   const { state, dispatch } = useContext(Store);
   const { cart, userInfo } = state;
+  console.log(state)
   const [ cartItemCount, setCartItemCount] = useState(0);
   const router = useRouter();
+  
   useEffect(() => {
     setCartItemCount(cart.cartItems.reduce(( a, c) => a + c.quantiny, 0))
   }, [cart.cartItems]);
@@ -41,12 +44,12 @@ function Layout({ title, children}) {
 
       <div className='flex min-h-screen flex-col justify-between'>
         <header>
-          <nav className='flex h-12 justify-between shadow-md items-center px-4'>
+          <nav className='flex h-16 justify-between shadow-md items-center px-5'>
             <Link href="/" className='text-lg font-bold'>
               ikiguy
             </Link>
             <div>
-              <Link href="/cart" className='p-2'>
+              <Link href="/cart" className=' p-2'>
               Cart
              { cartItemCount > 0 && (
               <span className='ml-1 rounded-full bg-red-600 px-2 py-1 text-xs font-bold text-white'>
@@ -89,9 +92,25 @@ function Layout({ title, children}) {
                  } */}
                 {userInfo ? (
                   <Menu as="div" className="relative inline-block">
+                      
                       <Menu.Button className="text-orange-600">
+                       <div className='flex'> 
+                       <img 
+                        src={userInfo?.avatar}
+                        alt={userInfo?.avatar}
+                        className='rounded-lg shadow'
+                        style={{
+                          borderRadius: '50%', width: '30px', height: '30px',
+                          transform: 'translateY(-3px)', marginRight: '3px'
+                      }}
+                    />
                         {userInfo.name}
+                       </div>
+                      
+                              
                       </Menu.Button>
+                      
+                      
                       <Menu.Items className="absolute right-0 w-56 origin-top-right shadow-lg">
                         <Menu.Item>
                           <DropdownLink href="/profile" 

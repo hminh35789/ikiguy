@@ -15,17 +15,21 @@ handler.put(async (req, res) => {
   user.password = req.body.password
     ? bcrypt.hashSync(req.body.password)
     : user.password;
+  user.avatar = req.body.avatar;
   await user.save();
   await db.disconnect();
 console.log(req.user)
+
   const token = signToken(user);
   console.log(token)
+
   res.send({
     token,
     _id: user._id,
     name: user.name,
     email: user.email,
     isAdmin: user.isAdmin,
+    avatar: user.avatar
   });
 });
 

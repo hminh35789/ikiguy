@@ -12,6 +12,7 @@ import Cookies from 'js-cookie'
 
 function LoginScreen() {
     const { state, dispatch } = useContext(Store);
+  
     const { userInfo } = state;
     
     // const { data: session } = useSession();
@@ -24,6 +25,7 @@ function LoginScreen() {
       if (userInfo) {
         router.push('/');
       }
+     
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
      

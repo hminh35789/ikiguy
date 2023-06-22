@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Layout from '../../../components/Layout';
@@ -18,7 +19,25 @@ function reducer(state, action) {
       return { ...state, loading: false, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-    default:
+    case 'UPDATE_REQUEST':
+      return { ...state, loadingUpdate: true, errorUpdate: '' };
+    case 'UPDATE_SUCCESS':
+      return { ...state, loadingUpdate: false, errorUpdate: '' };
+    case 'UPDATE_FAIL':
+      return { ...state, loadingUpdate: false, errorUpdate: action.payload };
+
+    case 'UPLOAD_REQUEST':
+      return { ...state, loadingUpload: true, errorUpload: '' };
+    case 'UPLOAD_SUCCESS':
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: '',
+      };
+    case 'UPLOAD_FAIL':
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
+  
+      default:
       return state;
   }
 }
@@ -26,12 +45,36 @@ function reducer(state, action) {
   const  productId = params.id;
   const { state } = useContext(Store);
 
-  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, loadingUpdate, loadingUpload  }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
   });
 
   const router = useRouter();
+  const [file, setFile] = useState([]); 
+
+  const uploadHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    try {
+      dispatch({ type: 'UPLOAD_REQUEST' });
+      const { data } = await axios.post('/api/admin/upload', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+      dispatch({ type: 'UPLOAD_SUCCESS' });
+      setFile(URL.createObjectURL(file));
+      setValue('image', data.secure_url);
+      toast.success('File uploaded successfully');
+    } catch (err) {
+      dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  };
+
   const { userInfo } = state;
 
   const {
@@ -40,6 +83,7 @@ function reducer(state, action) {
     formState: { errors },
     setValue,
   } = useForm();
+  
 
   useEffect(() => {
     if (!userInfo) {
@@ -60,6 +104,7 @@ function reducer(state, action) {
               setValue('brand', data.brand);
               setValue('countInStock', data.countInStock);
               setValue('description', data.description);
+              
             } catch (err) {
               dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
             }
@@ -191,6 +236,21 @@ function reducer(state, action) {
                 {errors.image && (
                   <div className="text-red-500">{errors.image.message}</div>
                 )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="imageFile">Upload image</label>
+
+                <img src={file  || userInfo?.avatar} 
+                        alt="avatar" />
+
+                <input
+                  type="file"
+                  className="w-full"
+                  id="imageFile"
+                  onChange={uploadHandler}
+                />
+
+                {loadingUpload && <div>Uploading....</div>}
               </div>
               <div className="mb-4">
                 <label htmlFor="category">category</label>

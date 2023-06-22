@@ -10,7 +10,7 @@ function ProductItem({ product, addToCartHandler }) {
             <img 
                 src={product.image}
                 alt={product.name}
-                className='rounded-lg shadow'
+                className='rounded-lg shadow object-cover h-60 w-full'
             />
         </Link>
         <div className='flex flex-col items-center justify-center p-5'> 

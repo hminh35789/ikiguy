@@ -141,7 +141,8 @@ function reducer(state, action) {
           loadPaypalScript();
       } 
  
-    }, [order, successDeliver, orderId, paypalDispatch, userInfo, successPay, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [order, successDeliver, orderId, paypalDispatch, successPay, router]);
 
     function createOrder(data, actions) {
       return actions.order
@@ -326,7 +327,7 @@ function reducer(state, action) {
 
                   {loadingPay && <div>Loading...</div>}
 
-                  {userInfo.isAdmin  && !order.isDelivered && (
+                  {userInfo?.isAdmin   && !order.isDelivered && (
                   <li>
                     {loadingDeliver && <div>Loading...</div>}
                     <button
