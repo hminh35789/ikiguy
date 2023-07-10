@@ -4,14 +4,14 @@ import Link from 'next/link'
 import React, {useContext, useEffect, useState} from 'react'
 import { Store } from '../utils/Store'
 import Button from '../pages/Button';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
 import { Menu } from '@headlessui/react';
 import DropdownLink from './DropdownLink';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-import axios from 'axios';
-import { getError } from '../utils/error';
+// import axios from 'axios';
+// import { getError } from '../utils/error';
 
 
 function Layout({ title, children}) {
