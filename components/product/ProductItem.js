@@ -8,7 +8,7 @@ function ProductItem({ product, addToCartHandler }) {
     <div className='card'>
         <Link href={`/product/${product.slug}`}>
             <img 
-                src={product.image}
+                src={product.image[0]}
                 alt={product.name}
                 className='rounded-lg shadow object-cover h-60 w-full'
             />

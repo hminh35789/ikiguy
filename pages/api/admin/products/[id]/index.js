@@ -27,6 +27,8 @@ handler.put(async (req, res) => {
     product.brand = req.body.brand;
     product.countInStock = req.body.countInStock;
     product.description = req.body.description;
+    product.isFeatured = req.body.isFeatured;
+    product.featuredImage = req.body.featuredImage;
     await product.save();
     await db.disconnect();
     res.send({ message: 'Product updated successfully' });

@@ -164,9 +164,9 @@ function UserEdit({ params }) {
                   id="admin"
                   checked={isAdmin}
                   onClick={handleCheck}
-                  {...register('admin', {
-                    required: 'Please enter admin',
-                  })}
+                  {...register('admin'
+                   
+                  )}
                 />
                 
                 {errors.isAdmin && (

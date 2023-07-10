@@ -51,9 +51,14 @@ function reducer(state, action) {
   });
 
   const router = useRouter();
-  const [file, setFile] = useState([]); 
+  const [fileImg, setFileImg] = useState([]); 
 
-  const uploadHandler = async (e) => {
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [fileFeature, setFileFeature] = useState([]); 
+  const [ img, setImg ] = useState([]);
+  const [ feature, setFeature ] = useState([]);
+
+  const uploadImage = async (e) => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
     bodyFormData.append('file', file);
@@ -66,9 +71,31 @@ function reducer(state, action) {
         },
       });
       dispatch({ type: 'UPLOAD_SUCCESS' });
-      setFile(URL.createObjectURL(file));
+      setFileImg(URL.createObjectURL(file));
       setValue('image', data.secure_url);
-      toast.success('File uploaded successfully');
+      toast.success('File image uploaded successfully');
+    } catch (err) {
+      dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  };
+
+  const uploadFeatured = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    try {
+      dispatch({ type: 'UPLOAD_REQUEST' });
+      const { data } = await axios.post('/api/admin/upload', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+      dispatch({ type: 'UPLOAD_SUCCESS' });
+      setFileFeature(URL.createObjectURL(file));
+      setValue('featuredImage', data.secure_url);
+      toast.success('File Feature uploaded successfully');
     } catch (err) {
       dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
       toast.error(getError(err));
@@ -95,11 +122,15 @@ function reducer(state, action) {
               const { data } = await axios.get(`/api/admin/products/${productId}`, {
                 headers: { authorization: `Bearer ${userInfo.token}` },
               });
+              setIsFeatured(data.isFeatured);
               dispatch({ type: 'FETCH_SUCCESS' });
               setValue('name', data.name);
               setValue('slug', data.slug);
               setValue('price', data.price);
               setValue('image', data.image);
+              setValue('featuredImage', data.featuredImage);
+              setImg(data.image);
+              setFeature(data.featuredImage)
               setValue('category', data.category);
               setValue('brand', data.brand);
               setValue('countInStock', data.countInStock);
@@ -124,6 +155,7 @@ function reducer(state, action) {
     brand,
     countInStock,
     description,
+    featuredImage
   }) => {
     try {
       dispatch({ type: 'UPDATE_REQUEST' });
@@ -136,6 +168,8 @@ function reducer(state, action) {
         brand,
         countInStock,
         description,
+        isFeatured,
+        featuredImage
       },
       { headers: { authorization: `Bearer ${userInfo.token}` } }
       );
@@ -148,10 +182,13 @@ function reducer(state, action) {
     }
   };
 
+  const handleCheck = () => {
+    setIsFeatured(!isFeatured)
+}
   return (
     <Layout title={`Edit Product ${productId}`}>
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
+      <div className="grid md:grid-cols-12 md:gap-5">
+        <div className="md:col-span-2">
           <ul>
             <li>
               <Link href="/admin/dashboard">Dashboard</Link>
@@ -168,8 +205,9 @@ function reducer(state, action) {
               <Link href="/admin/users">Users</Link>
             </li>
           </ul>
-        </div>
-        <div className="md:col-span-3">
+         </div>
+         
+        <div className="md:col-span-5">
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
@@ -224,36 +262,7 @@ function reducer(state, action) {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="image">image</label>
-                <input
-                  type="text"
-                  className="w-full"
-                  id="image"
-                  {...register('image', {
-                    required: 'Please enter image',
-                  })}
-                />
-                {errors.image && (
-                  <div className="text-red-500">{errors.image.message}</div>
-                )}
-              </div>
-              <div className="mb-4">
-                <label htmlFor="imageFile">Upload image</label>
-
-                <img src={file  || userInfo?.avatar} 
-                        alt="avatar" />
-
-                <input
-                  type="file"
-                  className="w-full"
-                  id="imageFile"
-                  onChange={uploadHandler}
-                />
-
-                {loadingUpload && <div>Uploading....</div>}
-              </div>
-              <div className="mb-4">
-                <label htmlFor="category">category</label>
+                <label htmlFor="category">Category</label>
                 <input
                   type="text"
                   className="w-full"
@@ -267,7 +276,7 @@ function reducer(state, action) {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="brand">brand</label>
+                <label htmlFor="brand">Brand</label>
                 <input
                   type="text"
                   className="w-full"
@@ -281,7 +290,7 @@ function reducer(state, action) {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="countInStock">countInStock</label>
+                <label htmlFor="countInStock">Count Instock</label>
                 <input
                   type="text"
                   className="w-full"
@@ -297,7 +306,7 @@ function reducer(state, action) {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="countInStock">description</label>
+                <label htmlFor="countInStock">Description</label>
                 <input
                   type="text"
                   className="w-full"
@@ -313,6 +322,24 @@ function reducer(state, action) {
                 )}
               </div>
               <div className="mb-4">
+                <label htmlFor="countInStock">Is featured image</label>
+                <input
+                  type="radio"
+                  className=""
+                  id="featured"
+                  checked={isFeatured}
+                  onClick={handleCheck}
+                  {...register('featured')}
+                />
+                
+                {errors.isFeatured && (
+                  <div className="text-red-500">
+                    {errors.isFeatured.message}
+                  </div>
+                )} 
+              </div>
+              {/* button */}
+              <div className="mb-4">
                 <button disabled={loadingUpdate} className="primary-button">
                   {loadingUpdate ? 'Loading' : 'Update'}
                 </button>
@@ -323,6 +350,71 @@ function reducer(state, action) {
             </form>
           )}
         </div>
+        {/* image */}
+        <div className="pt-10 md:col-span-5">
+        {isFeatured && 
+                   <div className="mb-4">
+                      <label htmlFor="imageFile">Upload feature</label>
+                      <div className="mb-4">
+                          <label htmlFor="feature">Feature url</label>
+                          <input
+                            type="text"
+                            className="w-full"
+                            id="featuredImage"
+                            {...register('featuredImage')}
+                          />
+                          {errors.feature && (
+                            <div className="text-red-500">{errors.feature.message}</div>
+                          )}
+                      </div>
+                      {fileFeature.length > 0 &&  <img src={fileFeature} 
+                            alt="featuredImage" /> 
+                       || <img  src={feature}   alt="image" />     
+                      }
+                  
+                      <input
+                        type="file"
+                        className="w-full"
+                        id="featureFile"
+                        onChange={uploadFeatured}
+                      />
+      
+                      {loadingUpload && <div>Uploading....</div>}
+                 </div>
+              }
+           
+              <div className="mb-4">
+                  <label htmlFor="imageFile">Upload image</label>
+
+                  <div className="mb-4">
+                    <label htmlFor="image">Image url</label>
+                    <input
+                      type="text"
+                      className="w-full"
+                      id="image"
+                      {...register('image', {
+                        required: 'Please enter image',
+                      })}
+                    />
+                    {errors.image && (
+                      <div className="text-red-500">{errors.image.message}</div>
+                    )}
+                </div>
+
+                  {fileImg.length > 0 &&  <img src={fileImg}  alt="image" />
+                  || <img  src={img}   alt="image" />     
+                  }
+
+                  <input
+                    type="file"
+                    className="w-full"
+                    id="imageFile"
+                    onChange={uploadImage}
+                  />
+
+                  {loadingUpload && <div>Uploading....</div>}
+              </div>
+         </div>
       </div>
     </Layout>
   );

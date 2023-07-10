@@ -4,21 +4,47 @@ import Link from 'next/link'
 import React, {useContext, useEffect, useState} from 'react'
 import { Store } from '../utils/Store'
 import Button from '../pages/Button';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
 import { Menu } from '@headlessui/react';
 import DropdownLink from './DropdownLink';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
+import axios from 'axios';
+import { getError } from '../utils/error';
+
 
 function Layout({ title, children}) {
-
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { cart, userInfo } = state;
-  console.log(state)
-  const [ cartItemCount, setCartItemCount] = useState(0);
-  const router = useRouter();
   
+
+  
+  const [ cartItemCount, setCartItemCount] = useState(0);
+  
+  // const [showSidebar, setShowSidebar] = useState(false);
+  // const [categories, setCategories] = useState([]);
+
+  // const sidebarOpenHandler = () => {
+  //   setShowSidebar(true);
+  // };
+  // const sidebarCloseHandler = () => {
+  //   setShowSidebar(false);
+  // };
+
+  // const fetchCategories = async () => {
+  //   try {
+  //     const { data } = await axios.get(`/api/products/categories`);
+  //     setCategories(data);
+  //   } catch (err) {
+  //     toast.error(getError(err));
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchCategories();
+  // }, []);
+
   useEffect(() => {
     setCartItemCount(cart.cartItems.reduce(( a, c) => a + c.quantiny, 0))
   }, [cart.cartItems]);
@@ -157,9 +183,20 @@ function Layout({ title, children}) {
                   {/* dark mode */}
         
              <Button />
+
             </div>
+            {/* <ul>
+              {categories.map((category) => (
+                <li key={category} onClick={sidebarCloseHandler}>
+                  <Link href={`/search?category=${category}`}>{category}</Link>
+                </li>
+              ))}
+            </ul> */}
+
+
           </nav>
         </header>
+        
         <main className='container m-auto mt-4 px-4'>{children}
     
         </main>
