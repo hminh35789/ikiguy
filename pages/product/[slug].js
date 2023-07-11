@@ -254,7 +254,7 @@ export async function getServerSideProps(context) {
 
   await db.connect();
   const product = await Product.findOne({ slug }, '-reviews').lean();
-  await db.disconnect();
+ 
   return {
     props: {
       product: product ? db.convertDocToObj(product) : null,

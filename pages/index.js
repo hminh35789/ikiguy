@@ -66,11 +66,12 @@ function Home({ products, featuredProducts }) {
 
 export default dynamic(() => Promise.resolve(Home), {ssr: false});
 
+// export default Home()
 export async function getServerSideProps() {
   await db.connect();
   const products = await Product.find({}, '-reviews').lean();
   const featuredProducts = await Product.find({ isFeatured: true }).lean();
-  await db.disconnect();
+  
   
   return {
     props: {
